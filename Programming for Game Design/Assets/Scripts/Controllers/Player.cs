@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DetectAsteroids(3, asteroidTransforms);
         Vector3 playerpos = transform.position;
         if (Input.GetKeyDown("w"))
         {
@@ -67,6 +68,18 @@ public class Player : MonoBehaviour
                 return new Vector3(-1, -2);
             default:
                 return new Vector3(0, 0);
+        }
+    }
+
+    public void DetectAsteroids(float inMaxRange, List<Transform> inAsteroids)
+    {
+        foreach (Transform tempAsteroidsTransform in inAsteroids)
+        {
+            float distance = Vector3.Distance(tempAsteroidsTransform.position, transform.position);
+            if (distance <= 2.5f)
+            {
+                Debug.DrawLine(transform.position, tempAsteroidsTransform.position, Color.green);
+            }
         }
     }
 }
