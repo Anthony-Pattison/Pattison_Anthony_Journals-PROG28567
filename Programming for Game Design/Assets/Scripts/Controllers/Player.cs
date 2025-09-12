@@ -78,13 +78,12 @@ public class Player : MonoBehaviour
             Vector3 temppos = tempAsteroidsTransform.position;
             Vector3 playerpos = transform.position;
 
-
-            float mag = temppos.magnitude ;
-            temppos = new Vector2(temppos.x / mag, temppos.y / mag);
+            Vector3 direction = temppos - playerpos;
+            direction = direction.normalized;
 
             if (distance <= inMaxRange)
             {
-                Debug.DrawLine(playerpos, temppos, Color.green);
+                Debug.DrawLine(playerpos, temppos+(direction*2.5f), Color.green);
             }
         }
     }
