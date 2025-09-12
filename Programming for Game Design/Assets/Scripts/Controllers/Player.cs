@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -8,18 +9,16 @@ public class Player : MonoBehaviour
     public Transform enemyTransform;
     public GameObject bombPrefab;
     public List<Transform> asteroidTransforms;
+    public float laserMaxRange;
     public int AmountOfBombs;
     public float bombTrailSpacing;
     [SerializeField] float bombBuffer;
     // Update is called once per frame
     void Update()
     {
-        DetectAsteroids(3, asteroidTransforms);
+        DetectAsteroids(laserMaxRange, asteroidTransforms);
         Vector3 playerpos = transform.position;
-        if (Input.GetKeyDown("w"))
-        {
 
-        }
         if (Input.GetKeyDown("b"))
         {
             StartCoroutine(SpawnBombAtOffset(playerpos, new Vector3(0, 1, 0), bombBuffer, bombPrefab));
@@ -39,7 +38,6 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         Vector3 pos = playerpos + inOffset;
         Instantiate(bombPrefab, pos, Quaternion.identity);
-
     }
 
     IEnumerator SpawnBombTrailAtOffset(Vector3 playerpos, Vector3 inOffset, float spacing, float waitTime, GameObject bombPrefab)
@@ -76,9 +74,17 @@ public class Player : MonoBehaviour
         foreach (Transform tempAsteroidsTransform in inAsteroids)
         {
             float distance = Vector3.Distance(tempAsteroidsTransform.position, transform.position);
-            if (distance <= 2.5f)
+
+            Vector3 temppos = tempAsteroidsTransform.position;
+            Vector3 playerpos = transform.position;
+
+
+            float mag = temppos.magnitude ;
+            temppos = new Vector2(temppos.x / mag, temppos.y / mag);
+
+            if (distance <= inMaxRange)
             {
-                Debug.DrawLine(transform.position, tempAsteroidsTransform.position, Color.green);
+                Debug.DrawLine(playerpos, temppos, Color.green);
             }
         }
     }
