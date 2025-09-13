@@ -12,10 +12,12 @@ public class Player : MonoBehaviour
     public float laserMaxRange;
     public int AmountOfBombs;
     public float bombTrailSpacing;
+    public float ratio;
     [SerializeField] float bombBuffer;
     // Update is called once per frame
     void Update()
     {
+        WarpPlayer(enemyTransform.position, ratio);
         DetectAsteroids(laserMaxRange, asteroidTransforms);
         Vector3 playerpos = transform.position;
 
@@ -86,5 +88,12 @@ public class Player : MonoBehaviour
                 Debug.DrawLine(playerpos, temppos+(direction*2.5f), Color.green);
             }
         }
+    }
+
+    public void WarpPlayer(Vector3 target, float ratio)
+    {
+        Vector3 playerpos = transform.position;
+        target -= Vector3.one;
+        transform.position = Vector3.Lerp(playerpos, target, ratio);
     }
 }
