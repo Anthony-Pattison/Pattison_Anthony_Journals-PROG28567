@@ -17,10 +17,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        WarpPlayer(enemyTransform.position, ratio);
         DetectAsteroids(laserMaxRange, asteroidTransforms);
         Vector3 playerpos = transform.position;
-
+        if (Input.GetKeyDown("w"))
+        {
+            WarpPlayer(enemyTransform.position, ratio);
+        }
         if (Input.GetKeyDown("b"))
         {
             StartCoroutine(SpawnBombAtOffset(playerpos, new Vector3(0, 1, 0), bombBuffer, bombPrefab));
@@ -92,8 +94,10 @@ public class Player : MonoBehaviour
 
     public void WarpPlayer(Vector3 target, float ratio)
     {
-        Vector3 playerpos = transform.position;
-        target -= Vector3.one;
-        transform.position = Vector3.Lerp(playerpos, target, ratio);
+        if (ratio > 0.1f && ratio < 1.1f) {
+            Vector3 playerpos = transform.position;
+            target -= Vector3.one;
+            transform.position = Vector3.Lerp(playerpos, target, ratio);
+        }
     }
 }
