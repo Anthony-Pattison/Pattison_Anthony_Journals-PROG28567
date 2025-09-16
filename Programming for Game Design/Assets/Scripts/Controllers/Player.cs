@@ -1,103 +1,76 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class Player : MonoBehaviour
 {
+    public List<Transform> asteroidTransforms;
     public Transform enemyTransform;
     public GameObject bombPrefab;
-    public List<Transform> asteroidTransforms;
-    public float laserMaxRange;
-    public int AmountOfBombs;
-    public float bombTrailSpacing;
-    public float ratio;
-    [SerializeField] float bombBuffer;
-    // Update is called once per frame
+    public Transform bombsTransform;
+    [SerializeField] float maxSpeed = 1f;
+    [SerializeField] float accelerationTime = 1f;
+    [SerializeField] float speed = 0.01f;
+    public Vector3 PlayerSpeed;
+    public Vector3 Velocity;
+    float perviousVer = 0;
+    float perviousHorizontal = 0;
     void Update()
     {
-        DetectAsteroids(laserMaxRange, asteroidTransforms);
-        Vector3 playerpos = transform.position;
-        if (Input.GetKeyDown("w"))
+        
+        if (Input.GetAxisRaw("Vertical") != 0)
         {
-            WarpPlayer(enemyTransform.position, ratio);
+            perviousVer = Input.GetAxisRaw("Vertical");
         }
-        if (Input.GetKeyDown("b"))
+        if (Input.GetAxisRaw("Horizontal") != 0)
         {
-            StartCoroutine(SpawnBombAtOffset(playerpos, new Vector3(0, 1, 0), bombBuffer, bombPrefab));
+             perviousHorizontal = Input.GetAxisRaw("Horizontal");
         }
-        if (Input.GetKeyDown("t"))
+        float acceleration = maxSpeed / accelerationTime;
+        Velocity += Input.GetAxisRaw("Horizontal") * acceleration * Time.deltaTime * Vector3.right;
+        Velocity += Input.GetAxisRaw("Vertical") * acceleration * Time.deltaTime * Vector3.up;
+        if (Input.GetAxis("Horizontal") == 0)
         {
-            StartCoroutine(SpawnBombTrailAtOffset(playerpos, new Vector3(0, 1, 0), bombTrailSpacing, bombBuffer, bombPrefab));
+            Velocity -= perviousHorizontal * acceleration * Time.deltaTime * Vector3.right;
+        }
+        if (Input.GetAxis("Vertical") == 0)
+        {
+            Velocity -= perviousVer * acceleration * Time.deltaTime * Vector3.right;
         }
         if (Input.GetKeyDown("space"))
         {
-            StartCoroutine(SpawnBombAtOffset(playerpos + RandomNumConerVector(), new Vector3(0, 1, 0), bombBuffer, bombPrefab));
+            transform.eulerAngles += Vector3.back * 90;
         }
+
+        Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
+        transform.position += Velocity * Time.deltaTime;
+
+        print(Velocity);
     }
 
-    IEnumerator SpawnBombAtOffset(Vector3 playerpos, Vector3 inOffset, float waitTime, GameObject bombPrefab)
+    private void playerOUtdiseofscreen(Vector2 playerpos)
     {
-        yield return new WaitForSeconds(waitTime);
-        Vector3 pos = playerpos + inOffset;
-        Instantiate(bombPrefab, pos, Quaternion.identity);
-    }
+        Vector3 playerscreenpoint = Camera.main.WorldToScreenPoint(playerpos);
 
-    IEnumerator SpawnBombTrailAtOffset(Vector3 playerpos, Vector3 inOffset, float spacing, float waitTime, GameObject bombPrefab)
-    {
-        yield return new WaitForSeconds(waitTime);
-        for (int i = 0; i < AmountOfBombs; i++)
+        if (Screen.width <= playerscreenpoint.x)
         {
-            Vector3 pos = playerpos - inOffset;
-            pos.y -= spacing * i;
-            Instantiate(bombPrefab, pos, Quaternion.identity);
+            transform.position += Vector3.left * speed * Time.deltaTime;
+            Velocity = Vector3.zero;
         }
-    }
-
-    static Vector3 RandomNumConerVector()
-    {
-        int num = Random.RandomRange(1, 5);
-        switch (num)
+        if (0 >= playerscreenpoint.x)
         {
-            case 1:
-                return new Vector3(1, 0.5f);
-            case 2:
-                return new Vector3(1, -2);
-            case 3:
-                return new Vector3(-1, 0.5f);
-            case 4:
-                return new Vector3(-1, -2);
-            default:
-                return new Vector3(0, 0);
+            transform.position += Vector3.right * speed * Time.deltaTime;
+            Velocity = Vector3.zero;
         }
-    }
-
-    public void DetectAsteroids(float inMaxRange, List<Transform> inAsteroids)
-    {
-        foreach (Transform tempAsteroidsTransform in inAsteroids)
+        if (Screen.height <= playerscreenpoint.y)
         {
-            float distance = Vector3.Distance(tempAsteroidsTransform.position, transform.position);
-
-            Vector3 temppos = tempAsteroidsTransform.position;
-            Vector3 playerpos = transform.position;
-
-            Vector3 direction = temppos - playerpos;
-            direction = direction.normalized;
-
-            if (distance <= inMaxRange)
-            {
-                Debug.DrawLine(playerpos, temppos+(direction*2.5f), Color.green);
-            }
+            transform.position += Vector3.down * speed * Time.deltaTime;
+            Velocity = Vector3.zero;
+        }
+        if (0 >= playerscreenpoint.y)
+        {
+            transform.position += Vector3.up * speed * Time.deltaTime;
+            Velocity = Vector3.zero;
         }
     }
-
-    public void WarpPlayer(Vector3 target, float ratio)
-    {
-        if (ratio > 0.1f && ratio < 1.1f) {
-            Vector3 playerpos = transform.position;
-            target -= Vector3.one;
-            transform.position = Vector3.Lerp(playerpos, target, ratio);
-        }
-    }
+   
 }
