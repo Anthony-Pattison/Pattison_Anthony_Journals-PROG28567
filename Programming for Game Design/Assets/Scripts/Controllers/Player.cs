@@ -28,23 +28,10 @@ public class Player : MonoBehaviour
         float acceleration = maxSpeed / accelerationTime;
         Velocity += Input.GetAxisRaw("Horizontal") * acceleration * Time.deltaTime * Vector3.right;
         Velocity += Input.GetAxisRaw("Vertical") * acceleration * Time.deltaTime * Vector3.up;
-        if (Input.GetAxis("Horizontal") == 0)
-        {
-            Velocity -= perviousHorizontal * acceleration * Time.deltaTime * Vector3.right;
-        }
-        if (Input.GetAxis("Vertical") == 0)
-        {
-            Velocity -= perviousVer * acceleration * Time.deltaTime * Vector3.right;
-        }
-        if (Input.GetKeyDown("space"))
-        {
-            transform.eulerAngles += Vector3.back * 90;
-        }
+        Debug.Log(perviousVer);
 
         Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
         transform.position += Velocity * Time.deltaTime;
-
-        print(Velocity);
     }
 
     private void playerOUtdiseofscreen(Vector2 playerpos)
