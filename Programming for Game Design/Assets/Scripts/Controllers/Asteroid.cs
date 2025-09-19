@@ -7,19 +7,39 @@ public class Asteroid : MonoBehaviour
     public float moveSpeed;
     public float arrivalDistance;
     public float maxFloatDistance;
-    bool running;
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
+    bool running = false;
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, transform.position + AsteroidMovement(), moveSpeed);
-
+        StartCoroutine(Movementspeed(moveSpeed));
     }
-
+    
+    IEnumerator Movementspeed(float speed)
+    {
+        bool runningCorutine = true;
+        Vector3 obtainedpos = AsteroidMovement();
+        Vector3 endpos = transform.position + obtainedpos;
+        if (!running)
+        {
+            while (runningCorutine)
+            {
+                running = true;
+                transform.position += new Vector3(speed * 10 * obtainedpos.x, speed *10 * obtainedpos.y) * Time.deltaTime; 
+                if (round(transform.position) == round(endpos))
+                {
+                    runningCorutine=false;
+                    running = false;
+                }
+                yield return null;
+            }
+        }
+    }
+    Vector3 round(Vector3 pos)
+    {
+        pos.x = Mathf.Round(pos.x *10);
+         pos.y = Mathf.Round(pos.y * 10);
+         return pos = new Vector3(pos.x*0.1f, pos.y*0.1f);
+    }
     Vector3 AsteroidMovement()
     {
         int randomNum = Random.Range(1, 5);
@@ -37,6 +57,5 @@ public class Asteroid : MonoBehaviour
                 break;
         }
         return new Vector3(0, 0, 0);
-
     }
 }
