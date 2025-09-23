@@ -66,9 +66,10 @@ public class Player : MonoBehaviour
         
         for(int i = 0;i < points.Count; i++)
         {
+            Debug.DrawLine(transform.position + points[points.Count-1], transform.position + points[0], Color.green);
+
             Debug.DrawLine(transform.position + points[i], transform.position + points[i + 1], Color.green);
         }
-        Debug.DrawLine(transform.position + points[points.Count], transform.position + points[0], Color.green);
     }
     private void playerOUtdiseofscreen(Vector2 playerpos)
     {
