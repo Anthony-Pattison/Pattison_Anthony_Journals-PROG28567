@@ -17,12 +17,20 @@ public class Player : MonoBehaviour
     public Vector3 Velocity;
     [Space(10)]
     [Header("For the circle around player")]
+    [SerializeField] int NumOfPoints;
     public float radius;
     [SerializeField] List<float> listofanlges;
+    [Space(10)]
+    [Header("For Spawning Power Ups")]
+    public int HowMany;
+    [SerializeField] GameObject PowerUpPrefab;
     void Update()
     {
-        DrawacircleAroundPlayer();
-    
+        DrawacircleAroundPlayer(NumOfPoints);
+        if (Input.GetKeyDown("space"))
+        {
+            SpawnPowerUps(HowMany);
+        }
 
         float acceleration = maxSpeed / accelerationTime;
         Velocity += Input.GetAxisRaw("Horizontal") * acceleration * Time.deltaTime * Vector3.right;
@@ -48,14 +56,20 @@ public class Player : MonoBehaviour
         transform.position += Velocity * Time.deltaTime;
         playerOUtdiseofscreen(transform.position);
     }
-    
-    void DrawacircleAroundPlayer()
+    void SpawnPowerUps(int HowManyPowerUps)
+    {
+        float anlgelocation = 360f / HowManyPowerUps;
+        float PowerUpRadius = anlgelocation * Mathf.Deg2Rad;
+        for (int i = 0; i < HowManyPowerUps; i++)
+        {
+            float adjustment = PowerUpRadius * i;
+
+            Instantiate(PowerUpPrefab, transform.position + new Vector3(Mathf.Cos(PowerUpRadius + adjustment), Mathf.Sin(PowerUpRadius + adjustment)), Quaternion.identity);
+        }
+    }
+    void DrawacircleAroundPlayer(int howmanypoints)
     {
         Color linecolor = Color.green;
-        //for (int i = 1; i<listofanlges.Count; i++)
-        //{
-        //    Debug.DrawLine(transform.position + ChangingAngles.drawInaCircle(i, 1), transform.position  + ChangingAngles.drawInaCircle(i-1,1), Color.green);
-        //}
         Vector2 enemypos = enemyTransform.position;
 
         float distance = Vector2.Distance(transform.position, enemypos);
@@ -67,14 +81,13 @@ public class Player : MonoBehaviour
         {
              linecolor = Color.green;
         }
-        float anglestep = 360f / 6;
+        float anglestep = 360f / howmanypoints;
         radius = anglestep * Mathf.Deg2Rad;
-        Debug.Log(radius);
         List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < howmanypoints; i++)
         {
             float adjustment = radius * i;
-            points.Add(new Vector2(Mathf.Cos(radius * adjustment), Mathf.Sin(radius*adjustment)));
+            points.Add(new Vector2(Mathf.Cos(radius + adjustment), Mathf.Sin(radius+adjustment)));
         }
         
         for(int i = 0;i < points.Count - 1; i++)
