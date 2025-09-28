@@ -18,17 +18,19 @@ public class Player : MonoBehaviour
     [Space(10)]
     [Header("For the circle around player")]
     [SerializeField] int NumOfPoints;
-    public float radius;
+    float radius;
+    public float laserradius;
     [Space(10)]
     [Header("For Spawning Power Ups")]
     public int HowMany;
+    public float bombradius;
     [SerializeField] GameObject PowerUpPrefab;
     void Update()
     {
-        DrawacircleAroundPlayer(NumOfPoints);
+        DrawacircleAroundPlayer(NumOfPoints, laserradius);
         if (Input.GetKeyDown("space"))
         {
-            SpawnPowerUps(HowMany);
+            SpawnPowerUps(HowMany, bombradius);
         }
 
         float acceleration = maxSpeed / accelerationTime;
@@ -55,24 +57,25 @@ public class Player : MonoBehaviour
         transform.position += Velocity * Time.deltaTime;
         playerOUtdiseofscreen(transform.position);
     }
-    void SpawnPowerUps(int HowManyPowerUps)
+    void SpawnPowerUps(int HowManyPowerUps, float radious)
     {
         float anlgelocation = 360f / HowManyPowerUps;
         float PowerUpRadius = anlgelocation * Mathf.Deg2Rad;
         for (int i = 0; i < HowManyPowerUps; i++)
         {
             float adjustment = PowerUpRadius * i;
-
-            Instantiate(PowerUpPrefab, transform.position + new Vector3(Mathf.Cos(PowerUpRadius + adjustment), Mathf.Sin(PowerUpRadius + adjustment)), Quaternion.identity);
+            Vector2 position = transform.position + new Vector3(Mathf.Cos(PowerUpRadius + adjustment)* radious, Mathf.Sin(PowerUpRadius + adjustment)* radious);
+            
+            Instantiate(PowerUpPrefab, position, Quaternion.identity);
         }
     }
-    void DrawacircleAroundPlayer(int howmanypoints)
+    void DrawacircleAroundPlayer(int howmanypoints, float radiusoflaser)
     {
         Color linecolor = Color.green;
         Vector2 enemypos = enemyTransform.position;
 
         float distance = Vector2.Distance(transform.position, enemypos);
-        if (distance <= radius)
+        if (distance <= radiusoflaser)
         {
              linecolor = Color.red;
         }
@@ -88,7 +91,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < howmanypoints; i++)
         {
             float adjustment = radius * i;
-            points.Add(new Vector2(Mathf.Cos(radius + adjustment), Mathf.Sin(radius+adjustment)));
+            points.Add(new Vector2(Mathf.Cos(radius + adjustment)* radiusoflaser, Mathf.Sin(radius+adjustment)* radiusoflaser));
         }
         
         for(int i = 0;i < points.Count - 1; i++)
