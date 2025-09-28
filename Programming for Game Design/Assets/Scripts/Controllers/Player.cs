@@ -19,7 +19,6 @@ public class Player : MonoBehaviour
     [Header("For the circle around player")]
     [SerializeField] int NumOfPoints;
     public float radius;
-    [SerializeField] List<float> listofanlges;
     [Space(10)]
     [Header("For Spawning Power Ups")]
     public int HowMany;
@@ -81,9 +80,11 @@ public class Player : MonoBehaviour
         {
              linecolor = Color.green;
         }
+
         float anglestep = 360f / howmanypoints;
         radius = anglestep * Mathf.Deg2Rad;
         List<Vector3> points = new List<Vector3>();
+
         for (int i = 0; i < howmanypoints; i++)
         {
             float adjustment = radius * i;

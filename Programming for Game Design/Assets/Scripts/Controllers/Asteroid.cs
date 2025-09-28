@@ -34,7 +34,7 @@ public class Asteroid : MonoBehaviour
             }
         }
     }
-    Vector3 round(Vector3 pos)
+    public static Vector3 round(Vector3 pos)
     {
         pos.x = Mathf.Round(pos.x *10);
          pos.y = Mathf.Round(pos.y * 10);
