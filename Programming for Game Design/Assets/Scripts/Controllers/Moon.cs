@@ -46,7 +46,6 @@ public class Moon : MonoBehaviour
                 float normalizedTime = Mathf.Clamp01(t / 1);
 
                 t += 0.005f * Time.deltaTime;
-                print(t);
                 transform.position = Vector3.Lerp(transform.position , orbitPoint + points[i], curve.Evaluate(normalizedTime));
                 Debug.DrawLine(transform.position, orbitPoint + points[i]); 
                 if (Asteroid.round(transform.position) == Asteroid.round(orbitPoint + points[i]))

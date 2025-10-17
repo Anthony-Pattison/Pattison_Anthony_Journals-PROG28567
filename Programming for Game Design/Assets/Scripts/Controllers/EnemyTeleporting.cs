@@ -7,13 +7,8 @@ public class EnemyTeleporting : MonoBehaviour
     public int AmountOfPoints;
     public Transform PlayerTransform;
     public float LaserSize;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    public bool PlayerisNear;
+   
     void Update()
     {
         DrawDetectionCircle(AmountOfPoints, PlayerTransform.position, LaserSize);
@@ -42,8 +37,11 @@ public class EnemyTeleporting : MonoBehaviour
 
         if (distance<radius)
         {
-            print("the ship is touching me");
-            print("Eliot was here");
+            PlayerisNear = true;
+        }
+        else
+        {
+            PlayerisNear = false;
         }
 
     }

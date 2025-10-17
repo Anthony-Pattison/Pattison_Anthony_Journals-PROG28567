@@ -38,6 +38,5 @@ public class Stars : MonoBehaviour
             yield return new WaitForSeconds(drawingTime);
         }
         corutineRunning = false;
-        Debug.Log("running");
     }
 }
