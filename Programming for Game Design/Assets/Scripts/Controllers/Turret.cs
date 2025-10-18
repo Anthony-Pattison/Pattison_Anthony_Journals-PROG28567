@@ -28,8 +28,6 @@ public class Turret : MonoBehaviour
 
         Debug.DrawLine(transform.position, transform.position + transform.up, Color.green);
 
-        if (dot < 0) Debug.Log($"<color=red><size=16>In front!</size></color>");
-        if (dot > 0) Debug.Log($"<color=blue><size=16>Behind!</size></color>");
     }
     private float CalculateDegAngleFromVector(Vector2 position)
     {
